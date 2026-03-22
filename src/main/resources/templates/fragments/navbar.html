@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar">
+    <div class="navbar">
+        <a class="nav-logo" th:href="@{/}">PokeTCG Collection</a>
+        <div class="nav-links">
+            <a th:href="@{/}">My Collection</a>
+            <a th:href="@{/search}">Search Cards</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

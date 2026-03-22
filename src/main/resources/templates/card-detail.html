@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${card.name} + ' - PokeTCG'">Card Detail - PokeTCG</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <a th:href="@{/search}" class="back-link">← Back to Search</a>
+
+    <div th:if="${card == null}" class="empty-state">
+        <p>Card not found.</p>
+    </div>
+
+    <div th:if="${card != null}" class="card-detail">
+        <div class="card-detail-image">
+            <img th:src="${card.imageUrl}" th:alt="${card.name}" onerror="this.src='/images/placeholder.png'">
+        </div>
+
+        <div class="card-detail-info">
+            <h1 th:text="${card.name}">Card Name</h1>
+
+            <div class="detail-badges">
+                <span class="badge badge-type" th:text="${card.type}">Type</span>
+                <span class="badge badge-stage" th:text="${card.evolutionStage}">Stage</span>
+                <span class="badge badge-rarity" th:text="${card.raritySymbol}">Rarity</span>
+            </div>
+
+            <div class="detail-stats">
+                <div class="stat">
+                    <span class="stat-label">HP</span>
+                    <span class="stat-value" th:text="${card.hp}">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Retreat Cost</span>
+                    <span class="stat-value" th:text="${card.retreatCost}">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Market Value</span>
+                    <span class="stat-value" th:text="${'$' + #numbers.formatDecimal(card.marketValue, 1, 2)}">$0.00</span>
+                </div>
+            </div>
+
+            <div th:if="${card.abilities != null and !card.abilities.isEmpty()}" class="detail-section">
+                <h2>Abilities</h2>
+                <div th:each="ability : ${card.abilities}" class="ability-block">
+                    <h4><span th:text="${ability.type}">Type</span> — <span th:text="${ability.name}">Name</span></h4>
+                    <p th:text="${ability.description}">Description</p>
+                </div>
+            </div>
+
+            <div th:if="${card.attacks != null and !card.attacks.isEmpty()}" class="detail-section">
+                <h2>Attacks</h2>
+                <div th:each="attack : ${card.attacks}" class="attack-block">
+                    <div class="attack-header">
+                        <span class="attack-cost" th:text="${attack.cost}">Cost</span>
+                        <span class="attack-name" th:text="${attack.name}">Name</span>
+                        <span class="attack-damage" th:text="${attack.damage}">Damage</span>
+                    </div>
+                    <p th:if="${attack.description}" th:text="${attack.description}">Description</p>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div th:if="${card.weaknesses != null and !card.weaknesses.isEmpty()}" class="detail-section">
+                    <h2>Weaknesses</h2>
+                    <div th:each="w : ${card.weaknesses}" class="badge badge-weakness">
+                        <span th:text="${w.type + ' ' + w.value}">Type ×2</span>
+                    </div>
+                </div>
+
+                <div th:if="${card.resistances != null and !card.resistances.isEmpty()}" class="detail-section">
+                    <h2>Resistances</h2>
+                    <div th:each="r : ${card.resistances}" class="badge badge-resistance">
+                        <span th:text="${r.type + ' ' + r.value}">Type -30</span>
+                    </div>
+                </div>
+            </div>
+
+            <form th:action="@{/collection/add}" method="post" class="card-action">
+                <input type="hidden" name="cardId" th:value="${card.id}">
+                <button type="submit" class="btn btn-add">Add to Collection</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Cards - PokeTCG</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <h1 class="page-title">Search Cards</h1>
+
+    <form th:action="@{/search}" method="post" class="search-form">
+        <input type="text" name="name" placeholder="Search by card name..." th:value="${query}" class="search-input" autofocus>
+        <button type="submit" class="btn btn-search">Search</button>
+    </form>
+
+    <div th:if="${results != null and results.isEmpty()}" class="empty-state">
+        <p>No cards found for "<span th:text="${query}"></span>".</p>
+    </div>
+
+    <div th:if="${results != null and !results.isEmpty()}" class="card-grid">
+        <div th:each="card : ${results}" class="card-tile">
+            <a th:href="@{/card/{id}(id=${card.id})}">
+                <img th:src="${card.imageUrl}" th:alt="${card.name}" class="card-image" onerror="this.src='/images/placeholder.png'">
+            </a>
+            <div class="card-info">
+                <h3 class="card-name" th:text="${card.name}">Card Name</h3>
+                <span class="card-type" th:text="${card.type}">Type</span>
+                <span class="card-rarity" th:text="${card.raritySymbol}">Rarity</span>
+                <span class="card-value" th:text="${'$' + #numbers.formatDecimal(card.marketValue, 1, 2)}">$0.00</span>
+            </div>
+            <form th:action="@{/collection/add}" method="post" class="card-action">
+                <input type="hidden" name="cardId" th:value="${card.id}">
+                <button type="submit" class="btn btn-add">Add to Collection</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

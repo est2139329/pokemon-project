@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Collection - PokeTCG</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container">
+    <h1 class="page-title">My Collection</h1>
+
+    <div th:if="${cards == null or cards.isEmpty()}" class="empty-state">
+        <p>Your collection is empty. <a th:href="@{/search}">Search for cards</a> to get started!</p>
+    </div>
+
+    <div th:if="${cards != null and !cards.isEmpty()}" class="card-grid">
+        <div th:each="card : ${cards}" class="card-tile">
+            <a th:href="@{/card/{id}(id=${card.id})}">
+                <img th:src="${card.imageUrl}" th:alt="${card.name}" class="card-image" onerror="this.src='/images/placeholder.png'">
+            </a>
+            <div class="card-info">
+                <h3 class="card-name" th:text="${card.name}">Card Name</h3>
+                <span class="card-type" th:text="${card.type}">Type</span>
+                <span class="card-rarity" th:text="${card.raritySymbol}">Rarity</span>
+                <span class="card-value" th:text="${'$' + #numbers.formatDecimal(card.marketValue, 1, 2)}">$0.00</span>
+            </div>
+            <form th:action="@{/collection/remove}" method="post" class="card-action">
+                <input type="hidden" name="cardId" th:value="${card.id}">
+                <button type="submit" class="btn btn-remove">Remove</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
